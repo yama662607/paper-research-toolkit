@@ -1,0 +1,12 @@
+name = "semantic-scholar"
+command = "uvx"
+args = ["--from", "git+https://github.com/FujishigeTemma/semantic-scholar-mcp", "semantic-scholar-mcp", "serve"]
+transport = "stdio"
+description = "Enables academic paper searches, citation network tracing, and metadata retrieval via the Semantic Scholar API using uvx from github."
+category = "academic"
+tags = ["search", "papers", "citations"]
+last_updated = "2026-05-21"
+author = "FujishigeTemma"
+repository = "https://github.com/FujishigeTemma/semantic-scholar-mcp"
+icon = "graduation-cap"
+badge = "community"

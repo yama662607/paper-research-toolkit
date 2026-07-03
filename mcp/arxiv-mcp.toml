@@ -1,0 +1,12 @@
+name = "arxiv-mcp"
+command = "uvx"
+args = ["arxiv-mcp-server"]
+transport = "stdio"
+description = "Enables academic paper searches and retrieving PDF/full-text or abstract data from arXiv using uvx."
+category = "academic"
+tags = ["search", "papers", "arxiv", "physics"]
+last_updated = "2026-05-21"
+author = "blazickjp"
+repository = "https://github.com/blazickjp/arxiv-mcp-server"
+icon = "book-open"
+badge = "community"

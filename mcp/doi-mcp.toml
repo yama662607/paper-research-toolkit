@@ -1,0 +1,12 @@
+name = "doi-mcp"
+command = "npx"
+args = ["-y", "github:tfscharff/doi-mcp"]
+transport = "stdio"
+description = "Verifies academic citations against CrossRef, PubMed, OpenAlex, and other databases using npx to prevent citation hallucination."
+category = "academic"
+tags = ["science", "literature", "doi", "bibtex"]
+last_updated = "2026-05-21"
+author = "tfscharff"
+repository = "https://github.com/tfscharff/doi-mcp"
+icon = "shield-check"
+badge = "community"

@@ -1,0 +1,20 @@
+name = "crossref-mcp"
+command = "npx"
+args = ["-y", "@botanicastudios/crossref-mcp"]
+transport = "stdio"
+description = "Crossref API で title / author / DOI から出版メタデータを取得する MCP。BibTeX 作成前の DOI 検証に使う。"
+tags = ["academic", "crossref", "doi", "bibliography", "citation"]
+category = "academic"
+badge = "community"
+author = "botanicastudios"
+repository = "https://github.com/botanicastudios/crossref-mcp"
+last_updated = "2026-05-22"
+icon = "badge-check"
+
+[[examples]]
+title = "DOI metadata lookup"
+body = "`getWorkByDOI` で DOI から title / author / year / venue を取得し、`refs.bib` の入力前に照合する。"
+
+[[examples]]
+title = "title search"
+body = "曖昧な文献名を title search で候補化し、別 MCP の Semantic Scholar / OpenAlex 結果と突き合わせる。"

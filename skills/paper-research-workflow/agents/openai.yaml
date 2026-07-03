@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Research Workflow"
+  short_description: "論文候補の探索、検証、保存準備を整理"
+  default_prompt: "Use $paper-research-workflow to find, verify, and prepare papers for Zotero saving."
