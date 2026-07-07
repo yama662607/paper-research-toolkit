@@ -1,0 +1,21 @@
+name: install-lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  install-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check generated install docs
+        run: python scripts/generate_install_docs.py --check
+      - name: Validate install docs
+        run: python scripts/check_install_docs.py
+      - name: Compile install scripts
+        run: python -m py_compile scripts/generate_install_docs.py scripts/check_install_docs.py

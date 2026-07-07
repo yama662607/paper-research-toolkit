@@ -25,6 +25,11 @@ docs/
 - **保存**: `paper-download-kyoto-u`。OA は Unpaywall で解決して即DL、paywall は Kyoto-U EZproxy の認証ブラウザ経由で取得 → Zotero。
 
 ## セットアップ（2 ステップ）
+新しい公開インストール導線は [install/README.md](install/README.md) にあります。
+使いたいツールの install Markdown を全文コピーして、自分の AI Agent に渡してください。
+
+従来の論文調査バンドルは以下の手順でもセットアップできます。
+
 1. あなたのエージェント（Claude Code / Codex / Antigravity）に **`docs/SETUP_FOR_AGENT.md` を読んで実行**させる（uv/node 導入・doi-mcp ビルド・MCP 登録・skill 配置・疎通確認まで自動）。
 2. **`docs/MANUAL_STEPS.md`** の人手作業（API key・Chrome 拡張・Zotero・EZproxy ログイン）を済ませる。
 

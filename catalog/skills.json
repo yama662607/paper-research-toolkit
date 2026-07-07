@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "release": "v0.1.0",
+  "repository": "https://github.com/yama662607/agent-tools",
+  "default_branch": "main",
+  "skills": [
+    {
+      "id": "slide-creator",
+      "kind": "skill",
+      "display_name": "slide-creator",
+      "source_path": "skills/slide-creator",
+      "install_guide": "install/skills/slide-creator.md",
+      "description": "Create, edit, inspect, and validate PowerPoint .pptx decks, including native equations, embedded videos, animations, PowerPoint PDF QA, and manual-edit capture workflows.",
+      "risk_level": "medium",
+      "copy_mode": "copy-directory",
+      "supported_agents": [
+        {
+          "id": "claude-code",
+          "name": "Claude Code",
+          "target_path": "~/.claude/skills/slide-creator",
+          "target_doc": "docs/install/TARGET_CLAUDE_CODE.md"
+        },
+        {
+          "id": "codex",
+          "name": "Codex",
+          "target_path": "~/.codex/skills/slide-creator",
+          "target_doc": "docs/install/TARGET_CODEX.md"
+        },
+        {
+          "id": "antigravity",
+          "name": "Antigravity",
+          "target_path": "~/.gemini/antigravity-cli/skills/slide-creator",
+          "target_doc": "docs/install/TARGET_ANTIGRAVITY.md"
+        }
+      ],
+      "dependencies": [
+        {
+          "name": "python",
+          "required_for_install": false,
+          "required_for_runtime": true,
+          "notes": "Python scripts use uv inline metadata where available."
+        },
+        {
+          "name": "uv",
+          "required_for_install": false,
+          "required_for_runtime": true,
+          "notes": "Used to run bundled Python scripts without project-local dependency setup."
+        },
+        {
+          "name": "bun",
+          "required_for_install": false,
+          "required_for_runtime": false,
+          "notes": "Optional until native equation conversion is needed; do not run bun install without consent."
+        },
+        {
+          "name": "Microsoft PowerPoint for Mac",
+          "required_for_install": false,
+          "required_for_runtime": false,
+          "notes": "Needed only for high-fidelity visual QA PDF export."
+        }
+      ],
+      "network_access": [
+        {
+          "purpose": "download release archive or raw files",
+          "host": "github.com"
+        }
+      ],
+      "writes": [
+        "~/.agent-tools/cache/agent-tools/v0.1.0/<commit>/",
+        "~/.claude/skills/slide-creator or ~/.codex/skills/slide-creator or ~/.gemini/antigravity-cli/skills/slide-creator"
+      ],
+      "manual_steps": [
+        "Choose exactly one target agent before making changes.",
+        "Review the dry-run plan and explicitly say proceed.",
+        "Approve optional runtime setup such as bun install only when a later task needs it."
+      ],
+      "verification": [
+        "Confirm the target skill directory exists and contains SKILL.md.",
+        "Run the target agent's normal skill discovery or list command when available.",
+        "Optionally run python skill validation if a local validator is available."
+      ],
+      "rollback": [
+        "Remove the installed target skill directory if it was created by this installer.",
+        "Restore any timestamped backup if a managed target was replaced.",
+        "Remove the corresponding install-state entry under ~/.agent-tools/state/ if present."
+      ]
+    }
+  ]
+}
