@@ -46,7 +46,8 @@ after replacing the topic words, it is too generic — revise it before coding.
 | Create a new deck | pptxgenjs — read [references/creating.md](references/creating.md) |
 | Edit an existing deck | python-pptx + OOXML — read [references/editing.md](references/editing.md) |
 | Follow a supplied template strictly | clone-and-edit — read [references/template-following.md](references/template-following.md) |
-| Sync PowerPoint hand edits back to source | `scripts/sync_from_pptx.py` — read [references/roundtrip.md](references/roundtrip.md) |
+| Sync PowerPoint hand edits back to source (tagged decks) | `scripts/sync_from_pptx.py` — read [references/roundtrip.md](references/roundtrip.md) |
+| Capture manual edits from untagged decks | `scripts/capture_edits.py` — read [references/capturing-manual-edits.md](references/capturing-manual-edits.md) |
 | Normalize writer package metadata | `scripts/normalize_package.py` after BUILD, before verification |
 | Duplicate / delete slides safely | `scripts/clone_slide.py` (rels/media/orphans handled) |
 | Add native math equations | `scripts/add_equation.py` — read [references/equations.md](references/equations.md) |
