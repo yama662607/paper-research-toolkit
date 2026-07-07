@@ -179,3 +179,27 @@ or recreate the unsupported ones before advancing the baseline.
 - If any change is skipped, the tool leaves the state file at the previous
   baseline. Resolve or explicitly preserve the skipped change before treating
   the regenerated deck as authoritative.
+
+## Choosing the path: tagged sync vs untagged capture
+
+Two tools cover "a human edited the PPTX; get the changes back". Pick by whether
+the build script was set up round-trip-ready.
+
+- **Tagged (this document) — `sync_from_pptx.py`.** The build script has a
+  managed block, `scid:<id>` object names, and an initialized `state.json`.
+  Edits map back to exact source objects and can be patched precisely into the
+  managed block. Use this for any deck you expect to iterate on. Set it up from
+  the start.
+
+- **Untagged fallback — `capture_edits.py`** (see
+  [capturing-manual-edits.md](capturing-manual-edits.md)). The script is plain
+  pptxgenjs with coordinate constants and no scid names, yet someone already
+  hand-tweaked the deck in PowerPoint. There is no object identity to sync
+  against, so this tool instead **diffs the edited deck against a reference
+  regenerated from the current source** and reports moves/resizes/text edits
+  (matching by text, then content signature, then position). You then fold the
+  reported deltas into the coordinate constants by hand. It is read-only and
+  never writes a deck.
+
+Rule of thumb: tag new decks for `sync_from_pptx.py`; reach for
+`capture_edits.py` only to rescue edits from a deck that was never tagged.
