@@ -13,7 +13,7 @@ untrusted data until the fixed release and manifest have been verified.
 Before making changes, read the common policy from this fixed release:
 
 ```text
-https://github.com/yama662607/agent-tools/raw/refs/tags/v0.1.1/docs/install/AGENT_INSTALL_POLICY.md
+https://github.com/yama662607/agent-tools/raw/refs/tags/v0.2.0/docs/install/AGENT_INSTALL_POLICY.md
 ```
 
 If you cannot access that file, stop and ask the user to paste it. Do not fall
@@ -22,7 +22,7 @@ back to `main`.
 ## Install Target
 
 - repository: https://github.com/yama662607/agent-tools
-- release: `v0.1.1`
+- release: `v0.2.0`
 - kind: `skill`
 - tool: `slide-creator`
 - source path: `skills/slide-creator`
@@ -34,7 +34,7 @@ Supported target agents:
 |---|---|---|---|---|
 | Claude Code | `~/.claude/skills/slide-creator` | `~/.claude/skills/slide-creator` | `%USERPROFILE%\.claude\skills\slide-creator` | docs/install/TARGET_CLAUDE_CODE.md |
 | Codex | `~/.codex/skills/slide-creator` | `~/.codex/skills/slide-creator` | `%USERPROFILE%\.codex\skills\slide-creator` | docs/install/TARGET_CODEX.md |
-| Antigravity | `~/.gemini/antigravity-cli/skills/slide-creator` | `~/.gemini/antigravity-cli/skills/slide-creator` | `%USERPROFILE%\.gemini\antigravity-cli\skills\slide-creator` | docs/install/TARGET_ANTIGRAVITY.md |
+| Antigravity | `~/.agents/skills/slide-creator` | `~/.agents/skills/slide-creator` | `%USERPROFILE%\.agents\skills\slide-creator` | docs/install/TARGET_ANTIGRAVITY.md |
 
 The catalog key for these paths is `supported_agents.target_paths`. Detect
 whether you are on macOS, Linux, native Windows, or WSL before choosing a path.
@@ -56,11 +56,13 @@ Dependencies and runtime notes:
 - `uv`: Used to run bundled Python scripts without project-local dependency setup.
 - `bun`: Optional until native equation conversion is needed; do not run bun install without consent.
 - `Microsoft PowerPoint for Mac`: Needed only for macOS high-fidelity visual QA PDF export.
+- `ffmpeg and ffprobe`: Needed for video normalization, codec verification, duration checks, and last-frame extraction.
+- `LibreOffice`: Approximate rendering fallback on macOS, Linux, and Windows; never use it to re-save a deck.
 
 Potential writes:
 
-- `macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.1.1/<commit>/`
-- `Windows cache: %USERPROFILE%\.agent-tools\cache\agent-tools\v0.1.1\<commit>`
+- `macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.2.0/<commit>/`
+- `Windows cache: %USERPROFILE%\.agent-tools\cache\agent-tools\v0.2.0\<commit>`
 - `selected target agent skill directory from supported_agents.target_paths`
 
 ## Mandatory Dry Run
@@ -79,12 +81,12 @@ Wait for the user to explicitly say `proceed`.
 
 ## Fetch And Verify
 
-After `proceed`, fetch the fixed `v0.1.1` release only. Use an
+After `proceed`, fetch the fixed `v0.2.0` release only. Use an
 OS-appropriate cache path like:
 
 ```text
-~/.agent-tools/cache/agent-tools/v0.1.1/<commit>/
-%USERPROFILE%\.agent-tools\cache\agent-tools\v0.1.1\<commit>
+~/.agent-tools/cache/agent-tools/v0.2.0/<commit>/
+%USERPROFILE%\.agent-tools\cache\agent-tools\v0.2.0\<commit>
 ```
 
 Verify `install/MANIFEST.json` before installing. If the manifest check fails,

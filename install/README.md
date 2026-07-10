@@ -8,11 +8,11 @@ dry-run requirements, verification, and rollback instructions.
 
 | Tool | Kind | Install guide | Notes |
 |---|---|---|---|
-| `slide-creator` | skill | [install/skills/slide-creator.md](install/skills/slide-creator.md) | Create, edit, inspect, and validate PowerPoint .pptx decks, including native equations, embedded videos, animations, PowerPoint PDF QA, and manual-edit capture workflows. |
+| `slide-creator` | skill | [install/skills/slide-creator.md](install/skills/slide-creator.md) | Create, edit, inspect, and validate PowerPoint .pptx decks, including native equations, embedded videos, animations, PowerPoint PDF QA, existing-deck ingestion, and safe human-agent round-trip workflows. |
 
 ## Stable Release
 
-These guides are prepared for `v0.1.1` from:
+These guides are prepared for `v0.2.0` from:
 
 - https://github.com/yama662607/agent-tools
 

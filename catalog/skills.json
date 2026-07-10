@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "release": "v0.1.1",
+  "release": "v0.2.0",
   "repository": "https://github.com/yama662607/agent-tools",
   "default_branch": "main",
   "skills": [
@@ -10,7 +10,7 @@
       "display_name": "slide-creator",
       "source_path": "skills/slide-creator",
       "install_guide": "install/skills/slide-creator.md",
-      "description": "Create, edit, inspect, and validate PowerPoint .pptx decks, including native equations, embedded videos, animations, PowerPoint PDF QA, and manual-edit capture workflows.",
+      "description": "Create, edit, inspect, and validate PowerPoint .pptx decks, including native equations, embedded videos, animations, PowerPoint PDF QA, existing-deck ingestion, and safe human-agent round-trip workflows.",
       "risk_level": "medium",
       "copy_mode": "copy-directory",
       "supported_agents": [
@@ -38,9 +38,9 @@
           "id": "antigravity",
           "name": "Antigravity",
           "target_paths": {
-            "macos": "~/.gemini/antigravity-cli/skills/slide-creator",
-            "linux": "~/.gemini/antigravity-cli/skills/slide-creator",
-            "windows": "%USERPROFILE%\\.gemini\\antigravity-cli\\skills\\slide-creator"
+            "macos": "~/.agents/skills/slide-creator",
+            "linux": "~/.agents/skills/slide-creator",
+            "windows": "%USERPROFILE%\\.agents\\skills\\slide-creator"
           },
           "target_doc": "docs/install/TARGET_ANTIGRAVITY.md"
         }
@@ -69,6 +69,18 @@
           "required_for_install": false,
           "required_for_runtime": false,
           "notes": "Needed only for macOS high-fidelity visual QA PDF export."
+        },
+        {
+          "name": "ffmpeg and ffprobe",
+          "required_for_install": false,
+          "required_for_runtime": false,
+          "notes": "Needed for video normalization, codec verification, duration checks, and last-frame extraction."
+        },
+        {
+          "name": "LibreOffice",
+          "required_for_install": false,
+          "required_for_runtime": false,
+          "notes": "Approximate rendering fallback on macOS, Linux, and Windows; never use it to re-save a deck."
         }
       ],
       "network_access": [
@@ -78,8 +90,8 @@
         }
       ],
       "writes": [
-        "macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.1.1/<commit>/",
-        "Windows cache: %USERPROFILE%\\.agent-tools\\cache\\agent-tools\\v0.1.1\\<commit>",
+        "macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.2.0/<commit>/",
+        "Windows cache: %USERPROFILE%\\.agent-tools\\cache\\agent-tools\\v0.2.0\\<commit>",
         "selected target agent skill directory from supported_agents.target_paths"
       ],
       "manual_steps": [

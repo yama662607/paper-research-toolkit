@@ -2,8 +2,8 @@
   "files": [
     {
       "path": ".github/workflows/install-lint.yml",
-      "sha256": "4d9820a384b8284b54284b09ed5e9870bcd217686ce99357cd4df900c9b0331b",
-      "size": 686
+      "sha256": "0cad46967ad20cc24ce56ac4b3e955f8eb5deb6b130123b9cf8154482138d56c",
+      "size": 1079
     },
     {
       "path": "README.md",
@@ -12,18 +12,18 @@
     },
     {
       "path": "catalog/bundles.json",
-      "sha256": "e73699b872334435c6081ff73d50d1629038955536ccb26609ba7cb26d5984b7",
+      "sha256": "617f4eb0522ba51c836bf28ba6928197ca55bd8b0285995a9f279d936f4bed6d",
       "size": 127
     },
     {
       "path": "catalog/mcp.json",
-      "sha256": "d2f45e3dcd27b977763fd244ed54ec015017a32fe0c3c61119620eed253c8af2",
+      "sha256": "824bd468bbc64fa3260194a5069d26cf9d917038c7ec3a025d144fc65d5e03bb",
       "size": 131
     },
     {
       "path": "catalog/skills.json",
-      "sha256": "e37a5ffa050bc0e5b8b94c0d28844e019f5ff6a67defa64a4b1f6adba761f569",
-      "size": 4135
+      "sha256": "b2482da07248a430851312921aa82e6bb4ef3690ba388e26166855d9ca377665",
+      "size": 4629
     },
     {
       "path": "docs/install/AGENT_INSTALL_POLICY.md",
@@ -32,8 +32,8 @@
     },
     {
       "path": "docs/install/TARGET_ANTIGRAVITY.md",
-      "sha256": "b48c991e834f43c325cc15b238c94621c6c0ade98a02cc6cc5e91c70a7a2a668",
-      "size": 876
+      "sha256": "5cf11f6d3393fa6ddd0db7b02e809349111e92cee5753d1a9a78bd1dec76bc5a",
+      "size": 823
     },
     {
       "path": "docs/install/TARGET_CLAUDE_CODE.md",
@@ -47,8 +47,8 @@
     },
     {
       "path": "docs/install/TROUBLESHOOTING.md",
-      "sha256": "10ace5c17c3b20a954e94c38dee94b10e0cbdd94ab355b3ba884752204ed43ea",
-      "size": 2307
+      "sha256": "a94d45fb9f1776799ad9902f6f2e286228f3a21091a87201bddc2dd816968cf3",
+      "size": 2576
     },
     {
       "path": "docs/install/templates/bundle-install.md.tmpl",
@@ -76,23 +76,28 @@
       "size": 2708
     },
     {
+      "path": "docs/plans/slide-creator-v0.2.0.md",
+      "sha256": "a3342b7b9ce044360250d151c4003930eac25f33e1126baf531324905d64c441",
+      "size": 1541
+    },
+    {
       "path": "install/README.md",
-      "sha256": "58871611e1e0c5945472251c1428ca7537b4fb6c72c01fb4203e5e19e67c5741",
-      "size": 1279
+      "sha256": "8bf89e40f22cdee04a9ea512f7e4eb55d40227a797db0699e9dd6ad4dc9f806e",
+      "size": 1312
     },
     {
       "path": "install/ROLLBACK.md",
-      "sha256": "4cf2d41c51e51909c1f99cba60c2160736a31cb9519ddfa6532225b3a0409935",
+      "sha256": "edfec542623a574722fb0944d83b490d8581204f0b41af3d40eba626aeb7bf63",
       "size": 915
     },
     {
       "path": "install/skills/slide-creator.md",
-      "sha256": "5b818a9d9af7b72eabfdd905d69b8ac52afcf40f57a488bfcc83e90d54070137",
-      "size": 4513
+      "sha256": "e2869274630b7e956bdc147d11cd770a615f9d3b2a713ec0b596a9f6332da429",
+      "size": 4695
     },
     {
       "path": "scripts/check_install_docs.py",
-      "sha256": "8dd27a33109defc01b93ec045539745ec96f654d8853f4a82ca48cd4a276f5bd",
+      "sha256": "249a019768f95f54ac3f3c659dede5c4e0e6afe22e2b6fe961046458ae0e7eb7",
       "size": 7007
     },
     {
@@ -102,8 +107,8 @@
     },
     {
       "path": "skills/slide-creator/SKILL.md",
-      "sha256": "e6dea87325f3c68560e2e974b7f0bd58e64593ea3495cf52ef1bf3eb05201bcc",
-      "size": 15157
+      "sha256": "66b2b220e64944377b82c243c8b21eb996f1ffb4dd0a702d132021e30dadf0f8",
+      "size": 16370
     },
     {
       "path": "skills/slide-creator/assets/timing-templates/effect-appear.xml",
@@ -127,8 +132,8 @@
     },
     {
       "path": "skills/slide-creator/references/capturing-manual-edits.md",
-      "sha256": "613c6088f8d11f537398fdc67eb77ff2584333b74c9d28566a608ccdce637837",
-      "size": 7782
+      "sha256": "8607e24e153dc580a2c45d697d85dd882880d884e9a21b6f5662f4eb3b7e5596",
+      "size": 10105
     },
     {
       "path": "skills/slide-creator/references/creating.md",
@@ -156,14 +161,19 @@
       "size": 4425
     },
     {
+      "path": "skills/slide-creator/references/improving-existing-decks.md",
+      "sha256": "8510c5bd09b9c5083ab98f8435e494f9b138b41dba3d10cbfd2a7c00a5e4852e",
+      "size": 3062
+    },
+    {
       "path": "skills/slide-creator/references/qa-checklist.md",
       "sha256": "95331b56ad2d627449a6e5f6e922cdf397271a6f58f9ca840dffd5bed7efc29d",
       "size": 14941
     },
     {
       "path": "skills/slide-creator/references/roundtrip.md",
-      "sha256": "6e12e0e946c69c94349e78aa85909bd7f71833e74f2c4ff602c570078dc1f332",
-      "size": 8525
+      "sha256": "791d7a22048275c36365552dcf379a3f17db98398dc2944c7e3455842152cdc3",
+      "size": 10716
     },
     {
       "path": "skills/slide-creator/references/template-following.md",
@@ -172,8 +182,8 @@
     },
     {
       "path": "skills/slide-creator/references/video.md",
-      "sha256": "610b9584d020a9b5febd22941ed4f18d049e6bc2b927fa96c7840708a492bdc6",
-      "size": 6097
+      "sha256": "d571cce2b971bd38a71b6a9c3fb9c9da0bca761d1d2ba0a24ff3c62ed4ecb03f",
+      "size": 6967
     },
     {
       "path": "skills/slide-creator/scripts/add_equation.py",
@@ -192,13 +202,33 @@
     },
     {
       "path": "skills/slide-creator/scripts/capture_edits.py",
-      "sha256": "28c2a872ce072fd7c2751c42a2a1dbe388745f9371eef2e4fc422a3f20374583",
-      "size": 21590
+      "sha256": "3e413ce63dc515be02d94427e02ac26b104c13f66e3ba6154fe425e7e15f50e8",
+      "size": 27134
+    },
+    {
+      "path": "skills/slide-creator/scripts/check_video.py",
+      "sha256": "6fd19d389536d83be682ad596baa438bd2b26a02039b3e99567f87574e9be2ac",
+      "size": 5239
     },
     {
       "path": "skills/slide-creator/scripts/clone_slide.py",
       "sha256": "b8a387911dfb1b9ab18b4dbb4088084801698c3e1a9001a236d1729b852f89e1",
       "size": 10629
+    },
+    {
+      "path": "skills/slide-creator/scripts/dump_layout.py",
+      "sha256": "1524d2ad5dee42732c02706ca03e486df85df9f605c99eb94c3def02feb4a222",
+      "size": 6821
+    },
+    {
+      "path": "skills/slide-creator/scripts/extract_media.py",
+      "sha256": "7a9fa898313b5d29c1ab8c166bf0d6a18d51726edd061797363649250e2fe9e3",
+      "size": 7177
+    },
+    {
+      "path": "skills/slide-creator/scripts/ingest_deck.py",
+      "sha256": "5ca6ac50ff8432a3117ccfe38866ae3d5cdccd6dd645f602a6a1519425824438",
+      "size": 14319
     },
     {
       "path": "skills/slide-creator/scripts/normalize_package.py",
@@ -226,6 +256,16 @@
       "size": 15199
     },
     {
+      "path": "skills/slide-creator/scripts/render_slides.py",
+      "sha256": "0f60c9a88e49f51bcfa5439c14327befe3b1d469bbd54b0639d124bab806bac0",
+      "size": 3943
+    },
+    {
+      "path": "skills/slide-creator/scripts/safe_rebuild.py",
+      "sha256": "7969e38e757a717fee4f7ccd8c50497e41185897985f71dbda7b5c98ac33b4fc",
+      "size": 7472
+    },
+    {
       "path": "skills/slide-creator/scripts/sync_from_pptx.py",
       "sha256": "3f653d4e52d1775e0582bc5ead735d43ccabc8d1e9ef6c5bfa921fa072982701",
       "size": 40986
@@ -236,7 +276,7 @@
       "size": 16226
     }
   ],
-  "release": "v0.1.1",
+  "release": "v0.2.0",
   "repository": "https://github.com/yama662607/agent-tools",
   "schema_version": 1,
   "self_hash_excluded": "install/MANIFEST.json"

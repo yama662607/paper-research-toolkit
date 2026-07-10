@@ -20,6 +20,10 @@ references:
   requested slide/object, then verify.
 - **Template-following**: clone-and-edit the supplied deck; the template is
   the design system.
+- **Improve an existing hand-made deck** (no build script to regenerate
+  from): first ingest and understand the deck's own design
+  (`scripts/ingest_deck.py`), then make surgical edits that preserve it —
+  read [references/improving-existing-decks.md](references/improving-existing-decks.md).
 - **New deck**: choose one genre profile and design the deck deliberately.
 - **Round-trip collaboration**: when the user will manually adjust a generated
   deck in PowerPoint and wants future regeneration to preserve those edits,
@@ -45,18 +49,24 @@ after replacing the topic words, it is too generic — revise it before coding.
 | Read / analyze a deck | `uv run scripts/verify_deck.py deck.pptx --text` or unzip + inspect XML |
 | Create a new deck | pptxgenjs — read [references/creating.md](references/creating.md) |
 | Edit an existing deck | python-pptx + OOXML — read [references/editing.md](references/editing.md) |
+| Understand an existing hand-made deck (text+layout+media, optional thumbnails) | `uv run scripts/ingest_deck.py deck.pptx [--render qa/thumbs]` |
 | Follow a supplied template strictly | clone-and-edit — read [references/template-following.md](references/template-following.md) |
 | Sync PowerPoint hand edits back to source (tagged decks) | `scripts/sync_from_pptx.py` — read [references/roundtrip.md](references/roundtrip.md) |
 | Capture manual edits from untagged decks | `scripts/capture_edits.py` — read [references/capturing-manual-edits.md](references/capturing-manual-edits.md) |
+| Guard before overwriting a live/master deck (PowerPoint-open check + backup + untracked-edit gate) | `uv run scripts/safe_rebuild.py --deck LIVE.pptx --reference REF.pptx` — read [references/roundtrip.md](references/roundtrip.md) |
+| Dump per-shape layout (position/size/rotation/image sha1) | `uv run scripts/dump_layout.py deck.pptx [--slide N] [--json]` |
+| Extract embedded images/videos from a slide to files | `uv run scripts/extract_media.py deck.pptx --slide N --out DIR [--prefix NAME]` |
 | Normalize writer package metadata | `scripts/normalize_package.py` after BUILD, before verification |
 | Duplicate / delete slides safely | `scripts/clone_slide.py` (rels/media/orphans handled) |
 | Add native math equations | `scripts/add_equation.py` — read [references/equations.md](references/equations.md) |
 | Embed a video | `scripts/add_video.py` — read [references/video.md](references/video.md) |
+| Check embedded video completeness (duration + last frame) | `uv run scripts/check_video.py deck.pptx --thumb qa/video` |
 | Transitions / shape animations | `scripts/animate.py` — read [references/animations.md](references/animations.md) |
 | Design foundations (any deck) | read [references/design-principles.md](references/design-principles.md) |
 | Genre rules (academic/business/lecture) | read [references/design-profiles.md](references/design-profiles.md) |
 | Review / QA checklists & prohibitions | read [references/qa-checklist.md](references/qa-checklist.md) |
 | High-fidelity visual QA artifact | `uv run scripts/powerpoint_pdf_qa.py deck.pptx --out qa/powerpoint-pdf --pdf-only` |
+| Approximate render of a few slides (PowerPoint busy/unavailable) | `uv run scripts/render_slides.py deck.pptx --slides 2,7 --out qa/approx` |
 | Final validation | `uv run scripts/verify_deck.py deck.pptx` |
 
 All Python scripts are self-contained (`uv run` resolves their dependencies

@@ -61,6 +61,7 @@ NS = {
     "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
     "p": "http://schemas.openxmlformats.org/presentationml/2006/main",
     "p14": "http://schemas.microsoft.com/office/powerpoint/2010/main",
+    "m": "http://schemas.openxmlformats.org/officeDocument/2006/math",
 }
 R_EMBED = "{%s}embed" % NS["r"]
 R_LINK = "{%s}link" % NS["r"]
@@ -220,6 +221,62 @@ def _content_sig(sh, typ):
     return None, None  # non-content shape: signature not applicable
 
 
+def _line_spacing(sh):
+    """Per-paragraph line-spacing values from a:pPr/a:lnSpc.
+    Each entry is '<pts>pt' (a:spcPts val/100), '<pct>%' (a:spcPct val/1000),
+    or None (inherited/default)."""
+    try:
+        el = sh._element
+    except Exception:
+        return []
+    out = []
+    # paragraphs are a:p whether the body is p:txBody (slide) or a:txBody (table)
+    for p in el.findall(".//a:p", NS):
+        val = None
+        ln = p.find("a:pPr/a:lnSpc", NS)
+        if ln is not None:
+            pts = ln.find("a:spcPts", NS)
+            pct = ln.find("a:spcPct", NS)
+            try:
+                if pts is not None and pts.get("val"):
+                    val = "%gpt" % (int(pts.get("val")) / 100)
+                elif pct is not None and pct.get("val"):
+                    val = "%g%%" % (int(pct.get("val")) / 1000)
+            except Exception:
+                pass
+        out.append(val)
+    return out
+
+
+def _math_regions(shapes):
+    """Bboxes (EMU) of shapes containing native OMML math (a:m oMath)."""
+    out = []
+    for sh in _iter(shapes):
+        try:
+            el = sh._element
+        except Exception:
+            continue
+        if el.find(".//m:oMath", NS) is None and el.find(".//m:oMathPara", NS) is None:
+            continue
+        l, t, w, h, _r = _geo(sh)
+        if l is not None and t is not None:
+            out.append((l, t, w or 0, h or 0))
+    return out
+
+
+def _overlaps_math(sh, regions, margin=0.5 * EMU):
+    """True if the shape's bbox intersects any math region (expanded by margin)."""
+    l, t, w, h, _r = _geo(sh)
+    if l is None or t is None:
+        return False
+    x1, y1, x2, y2 = l, t, l + (w or 0), t + (h or 0)
+    for (ml, mt, mw, mh) in regions:
+        if (x1 < ml + mw + margin and ml - margin < x2
+                and y1 < mt + mh + margin and mt - margin < y2):
+            return True
+    return False
+
+
 def _meta(sh):
     typ = _type(sh)
     sig, sig_reason = _content_sig(sh, typ)
@@ -283,7 +340,9 @@ SUGGEST = {
     ("added", "*"): "New shape added by hand -- recreate it in source (or import via round-trip).",
     ("removed", "medium"): "Shape removed in PowerPoint -- remove from source or confirm.",
     ("removed", "low"): "Likely equation/decorative re-serialization -- verify, probably ignore.",
-    ("noise", "*"): "PowerPoint autofit (width-only on a title) -- safe to ignore.",
+    ("noise", "*"): "Likely a PowerPoint save artifact (title autofit / equation preview) -- verify before ignoring.",
+    ("image_replaced", "*"): "Image content differs in place -- verify it is a real swap (not a re-encode or crop) before pointing the build script at the new image.",
+    ("text_props", "*"): "Paragraph formatting changed -- update lineSpacing (etc.) in the build script.",
 }
 
 
@@ -291,7 +350,8 @@ def _record(slide, kind, matched_by, confidence, reason, **kw):
     rec = {"slide": slide, "kind": kind, "matched_by": matched_by,
            "confidence": confidence, "reason": reason,
            "suspected_noise": kw.get("suspected_noise", False)}
-    for k in ("before_bbox", "after_bbox", "text_from", "text_to", "deltas"):
+    for k in ("before_bbox", "after_bbox", "text_from", "text_to", "deltas",
+              "sha1_from", "sha1_to", "line_spacing_from", "line_spacing_to"):
         if k in kw:
             rec[k] = kw[k]
     grp = "moved"
@@ -301,6 +361,10 @@ def _record(slide, kind, matched_by, confidence, reason, **kw):
         grp = "removed"
     elif kind == "text_changed":
         grp = "text"
+    elif kind == "image_replaced":
+        grp = "image_replaced"
+    elif kind == "text_props_changed":
+        grp = "text_props"
     if rec["suspected_noise"]:
         rec["suggested_action"] = SUGGEST[("noise", "*")]
     else:
@@ -313,7 +377,13 @@ def _record(slide, kind, matched_by, confidence, reason, **kw):
 def _emit_pair(slide, r, e, ambiguous, matched_by, th):
     d = _deltas(r["sh"], e["sh"], th)
     text_changed = r["text"] != e["text"] and (r["text"] or e["text"])
-    if not d and not text_changed:
+    # image replaced in place: same position (proximity pair), same type, but
+    # different embedded image content (sha1). Distinct from "moved".
+    image_replaced = (matched_by == "proximity"
+                      and r["type"] in ("PICTURE", "LINKED_PICTURE")
+                      and e["type"] in ("PICTURE", "LINKED_PICTURE")
+                      and r["sig"] and e["sig"] and r["sig"] != e["sig"])
+    if not d and not text_changed and not image_replaced:
         return None
     # confidence from match quality
     if matched_by == "text":
@@ -337,16 +407,50 @@ def _emit_pair(slide, r, e, ambiguous, matched_by, th):
     kind = "text_changed" if text_changed and not d else "moved"
     kw = {"before_bbox": _bbox(r["sh"]), "after_bbox": _bbox(e["sh"]),
           "deltas": d, "suspected_noise": suspected}
+    if image_replaced:
+        kind = "image_replaced"
+        # A pure in-place content change (no bbox move) can be a PowerPoint
+        # re-encode/crop, not a real swap -- keep it medium. A content change
+        # that also resized/moved the picture is a confident swap -> high.
+        conf = "high" if (d and not ambiguous) else "medium"
+        reason = "same position, different image content (sha1 mismatch)"
+        kw["sha1_from"] = r["sig"].split(":", 1)[1]
+        kw["sha1_to"] = e["sig"].split(":", 1)[1]
     if text_changed:
         kw["text_from"] = r["text"][:120]
         kw["text_to"] = e["text"][:120]
     return _record(slide, kind, mb, conf, reason, **kw)
 
 
-def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol):
+def _emit_props(slide, r, e, matched_by):
+    """--deep only: paragraph-property diffs (line spacing) on a matched text
+    pair. Line spacing is invisible to the bbox diff, so it needs its own pass."""
+    if not (r["text"] or e["text"]):
+        return None
+    ls_r, ls_e = _line_spacing(r["sh"]), _line_spacing(e["sh"])
+    if ls_r == ls_e:
+        return None
+    conf = "high" if (matched_by == "text" and len(ls_r) == len(ls_e)) else "medium"
+    return _record(slide, "text_props_changed", matched_by, conf,
+                   "paragraph line spacing differs (per-paragraph, None=inherited)",
+                   before_bbox=_bbox(r["sh"]), after_bbox=_bbox(e["sh"]),
+                   line_spacing_from=ls_r, line_spacing_to=ls_e)
+
+
+def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol, deep=False):
     refs = [_meta(s) for s in _iter(ref_shapes)]
     eds = [_meta(s) for s in _iter(ed_shapes)]
     changes = []
+    math_regions = _math_regions(ed_shapes)
+
+    def _handle(r, e, amb, mb):
+        rec = _emit_pair(slide_no, r, e, amb, mb, th)
+        if rec:
+            changes.append(rec)
+        if deep:
+            prec = _emit_props(slide_no, r, e, mb)
+            if prec:
+                changes.append(prec)
 
     # Pass A: exact text
     ebt = defaultdict(deque)
@@ -358,9 +462,7 @@ def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol):
         if r["text"] and ebt[r["text"]]:
             e = ebt[r["text"]].popleft()
             matched_e.add(id(e))
-            rec = _emit_pair(slide_no, r, e, False, "text", th)
-            if rec:
-                changes.append(rec)
+            _handle(r, e, False, "text")
         else:
             rem_r.append(r)
     rem_e = [e for e in eds if id(e) not in matched_e]
@@ -386,9 +488,7 @@ def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol):
                 e = min(bucket, key=lambda x: (abs((x["center"] or (0, 0))[0] - (cr or (0, 0))[0])
                                                + abs((x["center"] or (0, 0))[1] - (cr or (0, 0))[1])))
             used_e.add(id(e))
-            rec = _emit_pair(slide_no, r, e, dup, "content", th)
-            if rec:
-                changes.append(rec)
+            _handle(r, e, dup, "content")
         else:
             still_r.append(r)
     rem_e2 = [e for e in rem_e if id(e) not in used_e]
@@ -396,9 +496,7 @@ def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol):
     # Pass C: positional proximity (text edits + sig-less content moves)
     pairs, leftover_r, leftover_e = _greedy_pairs(still_r, rem_e2, tol)
     for r, e, amb in pairs:
-        rec = _emit_pair(slide_no, r, e, amb, "proximity", th)
-        if rec:
-            changes.append(rec)
+        _handle(r, e, amb, "proximity")
 
     # Unmatched
     for r in leftover_r:
@@ -414,8 +512,19 @@ def diff_slide(slide_no, ref_shapes, ed_shapes, th, tol):
         conf = "medium" if (e["text"] or (content and e["sig"])) else "low"
         reason = ("new content shape (%s)" % e["type"] if content
                   else "new text/shape (may be re-serialization)")
+        noise = False
+        # PowerPoint adds fallback raster previews to native OMML equations on
+        # save; an added picture sitting on/near a math region is that artifact,
+        # not a human edit. Heuristic: bbox overlap with a math graphicFrame
+        # (expanded by 0.5in) on the edited side only.
+        if (e["type"] in ("PICTURE", "LINKED_PICTURE")
+                and _overlaps_math(e["sh"], math_regions)):
+            conf = "low"
+            noise = True
+            reason = ("added picture overlaps a native-equation region -- "
+                      "likely PowerPoint equation preview fallback (save artifact)")
         changes.append(_record(slide_no, "added_in_edited", "unmatched", conf, reason,
-                               after_bbox=_bbox(e["sh"]),
+                               after_bbox=_bbox(e["sh"]), suspected_noise=noise,
                                **({"text_to": e["text"][:120]} if e["text"] else {})))
     return changes
 
@@ -462,6 +571,8 @@ def main():
                     help="proximity window in inches for text-edit recovery (default 0.30)")
     ap.add_argument("--slide", default=None, help="restrict to these slide numbers, e.g. 2,10,13")
     ap.add_argument("--json", action="store_true", help="emit machine-readable JSON")
+    ap.add_argument("--deep", action="store_true",
+                    help="also compare paragraph properties (line spacing) on matched text shapes")
     ap.add_argument("--hide-low-confidence", action="store_true",
                     help="drop low-confidence rows (equation/decorative re-serialization, title autofit)")
     a = ap.parse_args()
@@ -487,7 +598,7 @@ def main():
     for i, (rs, es) in enumerate(zip(ref.slides, ed.slides), 1):
         if only and i not in only:
             continue
-        changes.extend(diff_slide(i, rs.shapes, es.shapes, th, tol))
+        changes.extend(diff_slide(i, rs.shapes, es.shapes, th, tol, deep=a.deep))
     for s in added_slides:
         if not only or s in only:
             changes.append(_record(s, "slide_added", "unmatched", "high",
@@ -523,8 +634,14 @@ def main():
             tag = "  [suspected noise]" if c["suspected_noise"] else ""
             head = f"  [{C[c['confidence']]}] {c['kind']:16} via {c['matched_by']:9}"
             bits = []
-            if "text_from" in c:
-                bits.append(f'text "{c["text_from"][:44]}" -> "{c["text_to"][:44]}"')
+            if "text_from" in c or "text_to" in c:
+                bits.append(f'text "{c.get("text_from", "")[:44]}" -> "{c.get("text_to", "")[:44]}"')
+            if "sha1_from" in c or "sha1_to" in c:
+                bits.append(f'img sha1 {c.get("sha1_from", "?")[:10]} -> {c.get("sha1_to", "?")[:10]}')
+            if "line_spacing_from" in c or "line_spacing_to" in c:
+                bits.append("lnSpc [%s] -> [%s]" % (
+                    ", ".join(str(v) for v in c.get("line_spacing_from", [])),
+                    ", ".join(str(v) for v in c.get("line_spacing_to", []))))
             for d in c.get("deltas", []):
                 bits.append(f'{d["prop"]} {d["from"]}->{d["to"]}')
             if c["kind"] == "added_in_edited" and "after_bbox" in c:

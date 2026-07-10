@@ -57,3 +57,8 @@ On macOS, package managers may include Homebrew or mise. On Linux, they may
 include apt, dnf, pacman, zypper, or mise. On Windows, they may include winget,
 choco, scoop, or runtime installers. Do not run any of them without separate
 consent.
+
+Microsoft PowerPoint PDF automation is macOS-only. On Linux or Windows, use
+LibreOffice only as an explicitly approximate render path, or ask the user to
+perform the final fidelity check in desktop PowerPoint. Do not present an
+approximate render as PowerPoint truth.

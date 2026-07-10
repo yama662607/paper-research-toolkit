@@ -65,6 +65,28 @@ each result with `matched_by` and a `confidence`:
 
 Unmatched shapes are reported as `removed_in_edited` / `added_in_edited`.
 
+### Image replaced in place (`kind: image_replaced`)
+
+When a proximity pair is two pictures at ~the same position whose embedded
+image sha1s **differ**, the human likely swapped the figure, not moved it.
+Reported as `image_replaced` with `sha1_from` / `sha1_to`, so "swapped" is
+distinct from "moved". Confidence is **high** only when the picture was also
+resized/moved (a clear swap); a **pure in-place** content change (no bbox
+delta) is reported **medium**, because PowerPoint can re-encode/re-compress or
+crop an image on save — the bytes differ but nothing was really swapped. Verify
+a medium `image_replaced` (compare the two images) before repointing the build
+script at a "new" file.
+
+### Deep mode: paragraph properties (`--deep`, `kind: text_props_changed`)
+
+Line spacing is not part of the bounding box, so the normal diff cannot see it.
+With `--deep`, every matched text pair also compares per-paragraph line spacing
+(`a:pPr/a:lnSpc` → `a:spcPts` val/100 as `Npt`, or `a:spcPct` val/1000 as
+`N%`; `None` = inherited/default). A difference emits `text_props_changed`
+with `line_spacing_from` / `line_spacing_to` arrays (one entry per paragraph)
+— high confidence on an exact-text match with equal paragraph counts, medium
+otherwise (a paragraph-count change may just reflect a text edit).
+
 ## Confidence tiers and the noise it filters
 
 - **high** — exact text or unique content signature. Fold these in directly.
@@ -78,6 +100,14 @@ Unmatched shapes are reported as `removed_in_edited` / `added_in_edited`.
   - **Title autofit.** PowerPoint widens an autofit title text box on save
     (e.g. `w 12.13->12.49`). A **width-only** change on a title-like box (near
     the top, wide) is tagged `suspected_noise: true` and dropped by default.
+  - **Equation preview fallbacks.** When PowerPoint saves a deck containing
+    native OMML equations, it adds fallback raster previews, which surface as
+    phantom `added_in_edited` PICTUREs. Heuristic: an added picture whose bbox
+    overlaps a shape containing `m:oMath` (expanded by 0.5 in) on the edited
+    side is tagged `suspected_noise: true`, low confidence, and dropped by
+    `--hide-low-confidence`. It is a geometric heuristic — a picture a human
+    genuinely added *on top of* an equation would be misfiled as noise, so scan
+    the low rows once before discarding.
 
 A consistent-offset cluster (a whole diagram moved: every child shifts by the
 same `dy`) is the signature of a real group-move — fold it back as one constant.
@@ -91,13 +121,15 @@ same `dy`) is the signature of a real group-move — fold it back as one constan
   "changes": [
     {
       "slide": 10,
-      "kind": "moved | text_changed | added_in_edited | removed_in_edited | slide_added | slide_deleted",
+      "kind": "moved | text_changed | image_replaced | text_props_changed | added_in_edited | removed_in_edited | slide_added | slide_deleted",
       "matched_by": "text | content | proximity | ambiguous | unmatched",
       "confidence": "high | medium | low",
       "reason": "matched by content signature",
       "before_bbox": {"x":1.967,"y":1.75,"w":9.4,"h":5.248,"rot":0},
       "after_bbox":  {"x":1.439,"y":1.17,"w":10.455,"h":5.837,"rot":0},
       "text_from": "...", "text_to": "...",
+      "sha1_from": "34dcd688...", "sha1_to": "88a82a74...",
+      "line_spacing_from": ["18pt","18pt"], "line_spacing_to": ["14.5pt","14.5pt"],
       "deltas": [{"prop":"x","from":1.967,"to":1.439}, ...],
       "suspected_noise": false,
       "suggested_action": "Fold the bbox change into the build-script coordinate constants."
@@ -107,7 +139,10 @@ same `dy`) is the signature of a real group-move — fold it back as one constan
 ```
 
 All positions/sizes are in **inches**. `text_from`/`text_to` appear only on text
-changes; `before_bbox`/`after_bbox`/`deltas` only where geometry applies.
+changes; `before_bbox`/`after_bbox`/`deltas` only where geometry applies;
+`sha1_from`/`sha1_to` only on `image_replaced`; `line_spacing_from`/
+`line_spacing_to` (per-paragraph, `null` = inherited) only on
+`text_props_changed` (`--deep`).
 
 ## CLI
 
@@ -116,6 +151,7 @@ uv run scripts/capture_edits.py --reference REF.pptx --edited EDITED.pptx
     --threshold 0.03 | --threshold-inches 0.03   # ignore smaller moves (inches)
     --pos-tol 0.30                                # proximity window (inches)
     --slide 2,10,13                               # restrict to these slides
+    --deep                                        # also diff paragraph line spacing
     --hide-low-confidence                         # human edits only
     --json                                        # machine-readable
 ```

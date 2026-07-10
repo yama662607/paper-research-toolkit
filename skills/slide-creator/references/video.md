@@ -104,6 +104,24 @@ a fresh slide or strip the exotic animation first.
 - PowerPoint-for-web upload limit: 300 MB editable / videos ≤ 256 MB. Keep
   simulation clips short and 720p–1080p; crf 18–23.
 
+### Verify the video plays to completion
+
+`verify_deck.py` runs ffprobe for codec health only — it cannot detect a
+TRUNCATED video (a render that died before the animation/graph finished
+still probes as valid h264/aac). Use `scripts/check_video.py` instead:
+
+```bash
+uv run scripts/check_video.py deck.pptx --thumb qa/video   # all embedded videos
+uv run scripts/check_video.py deck.pptx --slide 10          # one slide's video
+```
+
+It prints duration/frames/codec/size per embedded video and, with `--thumb`,
+extracts each video's LAST frame as a PNG — confirm that frame shows the
+finished state (curve complete, animation at its end), not a mid-run state.
+Recommendation: make the video's poster frame its LAST frame (pass
+`--poster` to `add_video.py` with a last-frame grab), so the static poster
+shows the finished result rather than the empty starting state.
+
 ## Usage
 
 ```bash

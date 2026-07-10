@@ -180,6 +180,51 @@ or recreate the unsupported ones before advancing the baseline.
   baseline. Resolve or explicitly preserve the skipped change before treating
   the regenerated deck as authoritative.
 
+## Guardrail before overwriting a live/master deck
+
+When the live deck is a user-edited master, rebuilding over it is destructive:
+if PowerPoint still has the file open, or the deck contains hand edits that
+were never folded back into the source, the rebuild **silently reverts those
+manual edits — including swapped images**. An image the user replaced by hand
+looks identical in position and size, so the loss is easy to miss until it is
+too late.
+
+Never run a build command whose output path is a live/master deck without
+first passing `scripts/safe_rebuild.py`. It rebuilds nothing itself; it is a
+gate that must exit 0 before you overwrite:
+
+```bash
+uv run scripts/safe_rebuild.py --deck LIVE.pptx \
+  --reference /tmp/ref_from_current_source.pptx \
+  --backup-dir backups/
+```
+
+What it does, in order:
+
+1. **PowerPoint-closed check.** If the Microsoft PowerPoint process is running
+   and its owner lock file (`~$<basename>`) sits next to the deck, the deck is
+   likely open — exit 2. Have the user save and close it, then re-run.
+2. **Timestamped backup.** Copies the deck to
+   `<backup-dir>/<stem>_backup_<YYYYMMDD-HHMMSS-microseconds>[-N].pptx`
+   (default: the deck's own
+   directory) so the pre-rebuild state is always recoverable.
+3. **Untracked-edit capture.** With the required `--reference` (a deck rebuilt
+   from the CURRENT source to a temp path), it runs `capture_edits.py --deep`
+   against the live deck. Any change at any confidence — exit 3 with the list.
+   **Fold those
+   edits into the build source first**, regenerate the reference, and re-run
+   until the gate is clean.
+4. Only on exit 0 ("safe to rebuild") may the build overwrite the live deck.
+
+Exit codes: 0 = safe, 2 = PowerPoint has the deck open, 3 = untracked manual
+edits found, 1 = the gate itself failed to run (treat as unsafe).
+
+PowerPoint save artifacts such as equation preview pictures can appear as
+`suspected_noise`. The gate still blocks them by default because a genuine
+picture placed over an equation looks similar. Review the complete
+`capture_edits.py --deep` report first; only then may you rerun with
+`--allow-suspected-noise` to acknowledge those marked records explicitly.
+
 ## Choosing the path: tagged sync vs untagged capture
 
 Two tools cover "a human edited the PPTX; get the changes back". Pick by whether

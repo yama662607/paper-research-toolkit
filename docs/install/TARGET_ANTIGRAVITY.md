@@ -6,16 +6,16 @@ Default skill paths:
 
 | OS | Default path |
 |---|---|
-| macOS | `~/.gemini/antigravity-cli/skills/slide-creator` |
-| Linux | `~/.gemini/antigravity-cli/skills/slide-creator` |
-| Windows | `%USERPROFILE%\.gemini\antigravity-cli\skills\slide-creator` |
+| macOS | `~/.agents/skills/slide-creator` |
+| Linux | `~/.agents/skills/slide-creator` |
+| Windows | `%USERPROFILE%\.agents\skills\slide-creator` |
 
 Installation is a directory copy. If the directory already exists and was not
 created by this installer, stop and ask the user before replacing it.
 
-Antigravity skill support can vary by local setup. If the default path does not
-exist and the user cannot confirm Antigravity's current skill directory, stop
-and ask instead of guessing.
+The current Antigravity CLI convention uses `.agents/skills`. If an older or
+custom installation reports a different discovery path, stop and ask before
+copying into both locations.
 
 If Antigravity runs inside WSL, use the Linux path inside WSL. If Antigravity
 runs as a native Windows app, use the Windows path. Do not bridge between the
