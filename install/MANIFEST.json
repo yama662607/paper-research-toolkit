@@ -12,18 +12,18 @@
     },
     {
       "path": "catalog/bundles.json",
-      "sha256": "617f4eb0522ba51c836bf28ba6928197ca55bd8b0285995a9f279d936f4bed6d",
+      "sha256": "c4e342c9b00522f80963264da66a7c8a62b9d45a566ae2842fa5cf3132e0db9b",
       "size": 127
     },
     {
       "path": "catalog/mcp.json",
-      "sha256": "824bd468bbc64fa3260194a5069d26cf9d917038c7ec3a025d144fc65d5e03bb",
+      "sha256": "241c7e02c6cc1a48247b06ba0949c9f35451831290c09a8e1afcbf5532260ae2",
       "size": 131
     },
     {
       "path": "catalog/skills.json",
-      "sha256": "b2482da07248a430851312921aa82e6bb4ef3690ba388e26166855d9ca377665",
-      "size": 4629
+      "sha256": "a8955780de190924dc0b0299ceb68f982b90b5405fc004e20c8a6ea4f057c326",
+      "size": 4655
     },
     {
       "path": "docs/install/AGENT_INSTALL_POLICY.md",
@@ -81,23 +81,28 @@
       "size": 1541
     },
     {
+      "path": "docs/plans/slide-creator-v0.3.0.md",
+      "sha256": "f25f5e4aff1d1ac32ce1b3119d08614730e10f213bbb2f02ff5e88a191127ca2",
+      "size": 1266
+    },
+    {
       "path": "install/README.md",
-      "sha256": "8bf89e40f22cdee04a9ea512f7e4eb55d40227a797db0699e9dd6ad4dc9f806e",
-      "size": 1312
+      "sha256": "d493fb918a1aa38a697f66d903812bf9416fdc98b556919967068854b295fb36",
+      "size": 1338
     },
     {
       "path": "install/ROLLBACK.md",
-      "sha256": "edfec542623a574722fb0944d83b490d8581204f0b41af3d40eba626aeb7bf63",
+      "sha256": "56f81292698cd48f325d5e34d0e96dd6be38f41f7e6991e0798efbf65276f47b",
       "size": 915
     },
     {
       "path": "install/skills/slide-creator.md",
-      "sha256": "e2869274630b7e956bdc147d11cd770a615f9d3b2a713ec0b596a9f6332da429",
+      "sha256": "33bfe911960726a90f44ded321267f0e0b349aca6ba001b86f85a2f62003f33c",
       "size": 4695
     },
     {
       "path": "scripts/check_install_docs.py",
-      "sha256": "249a019768f95f54ac3f3c659dede5c4e0e6afe22e2b6fe961046458ae0e7eb7",
+      "sha256": "d1a36b8dd00e0cdea57672c97879e98526b1fb817a86b8f70d99d6a3c6237983",
       "size": 7007
     },
     {
@@ -107,8 +112,8 @@
     },
     {
       "path": "skills/slide-creator/SKILL.md",
-      "sha256": "66b2b220e64944377b82c243c8b21eb996f1ffb4dd0a702d132021e30dadf0f8",
-      "size": 16370
+      "sha256": "aba28a8740f6ae30fef2ed23e615e2e846fa4399504cd2b2e014611cc2c2701c",
+      "size": 17784
     },
     {
       "path": "skills/slide-creator/assets/timing-templates/effect-appear.xml",
@@ -136,9 +141,14 @@
       "size": 10105
     },
     {
+      "path": "skills/slide-creator/references/content-planning.md",
+      "sha256": "5c0a975e25dfa3a79457851583080f2b7428d2df5910a2fffc18d91494647f85",
+      "size": 5582
+    },
+    {
       "path": "skills/slide-creator/references/creating.md",
-      "sha256": "dc62d6385a9e34953104091f6c3858df50a7c44d43f5afbd46bc99da4f6cd9ee",
-      "size": 9372
+      "sha256": "d7d87fbc36445db2c8aaa2b992ec75768c0994406594da6db192e1b1da84cc0b",
+      "size": 9761
     },
     {
       "path": "skills/slide-creator/references/design-principles.md",
@@ -147,8 +157,8 @@
     },
     {
       "path": "skills/slide-creator/references/design-profiles.md",
-      "sha256": "5176edf16a78d0af8c94c0abaa1971253443b9a091c7c44859a7a177f0376f99",
-      "size": 17284
+      "sha256": "cdfd9af9c4230287a0ea7ca85c3663ce89b955fb380808372ec09b0a141057d1",
+      "size": 18037
     },
     {
       "path": "skills/slide-creator/references/editing.md",
@@ -167,8 +177,8 @@
     },
     {
       "path": "skills/slide-creator/references/qa-checklist.md",
-      "sha256": "95331b56ad2d627449a6e5f6e922cdf397271a6f58f9ca840dffd5bed7efc29d",
-      "size": 14941
+      "sha256": "6a269c35d20d1da60c7f7747b9c2c72e0a68d7324ff2f7ed2a01d0bc2bf2d6e7",
+      "size": 16954
     },
     {
       "path": "skills/slide-creator/references/roundtrip.md",
@@ -272,11 +282,11 @@
     },
     {
       "path": "skills/slide-creator/scripts/verify_deck.py",
-      "sha256": "c09cfcd5ba032bd84ba7a1ae5cd5b6bf1fd2136a8f510883a48907fe27d2f577",
-      "size": 16226
+      "sha256": "1faa6a4a6b0390043e62c44b7daf31d4744f01a8fa1ff824f404243cd1e6e704",
+      "size": 21671
     }
   ],
-  "release": "v0.2.0",
+  "release": "v0.3.0",
   "repository": "https://github.com/yama662607/agent-tools",
   "schema_version": 1,
   "self_hash_excluded": "install/MANIFEST.json"

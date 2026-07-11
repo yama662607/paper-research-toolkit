@@ -45,6 +45,9 @@ PART 2 — Design-system compliance:
   that look like the same card/grid template repeated with new text.
 - Does every content slide have a claim-style title (a sentence, not a
   topic label)? Exception: section dividers, agenda.
+- Read only titles plus the spoken transition into the next slide. Does each
+  claim create the question answered next? Flag new concepts that appear
+  without a causal bridge, even when both individual slides look polished.
 - Does every content slide have one dominant proof object (figure, chart,
   equation, table, image, or video poster) that supports the title? Flag text
   blocks that merely restate what the presenter should say.
@@ -91,6 +94,10 @@ PART 2 — Design-system compliance:
 - Footnotes/condition lines: if the audience must read it to understand the
   result, it must be readable from the back of the room. Do not hide N,
   parameters, units, or error-bar definitions in hairline text.
+- Audience-readable text is at least 16 pt. Only pure citations, page numbers,
+  and deliberately secondary source notes may be smaller. A condition,
+  definition, unit, axis explanation, or comparison label is not a citation
+  exception merely because it sits near the footer.
 - Layout variety: flag 3+ consecutive slides with identical composition.
 - Labels adjacent to what they label; direct labels preferred over distant
   legends.
@@ -116,6 +123,20 @@ PART 3 — Visible accessibility and evidence limits:
 
 PART 4 — Genre checks for [profile]:
 [paste the profile's own checklist items from design-profiles.md]
+
+PART 5 — Content accountability (required for technical/academic decks):
+- Apply the normative contracts and scope from content-planning.md; do not
+  invent a broader or weaker interpretation here.
+- Can the presenter explain every chart's axes, comparison, visible feature,
+  supported claim, and overclaim boundary?
+- Are claim-carrying numbers labeled or documented as measured, literature,
+  derived, fitted, calibrated, assumed, or illustrative?
+- When the scientific-model contract applies, can the audience reconstruct the governing/update rule,
+  relevant interactions/state transitions, boundary conditions, observables,
+  parameter units/provenance, and known omissions from the main deck plus
+  appendix?
+- Flag internal diagnostics that have not been translated into an audience
+  question. Visual polish does not make a debugging plot presentation-ready.
 
 Report format:
 1. Blocking defects
@@ -144,7 +165,7 @@ always visible to the audience.
 |---|---|---|
 | Body font | ≥ 18 pt (prefer 20–24) | Harvard Chan, ACU, WCAG-derived |
 | Title font | ≥ 24 pt (prefer 26–28 here) | Harvard Chan, ACU |
-| Conditions/captions | 13–14 pt if needed for interpretation; 11–12 pt only for pure source notes | projection practice |
+| Conditions/captions | ≥ 16 pt when needed for interpretation; 11–12 pt only for pure citations, page numbers, and secondary source notes | direct lab feedback + projection practice |
 | Contrast | ≥ 4.5:1 body, ≥ 3:1 large text | WCAG 2.x AA |
 | Bullets per slide | ≤ 4 | Harvard Chan, ACU, TEDx |
 | Colors | ≤ 3–4 beyond black/white | McKinsey convention, Ethos3 |
@@ -227,7 +248,7 @@ objects — treat them as geometry systems, not decoration):
 
 **Academic blockers** (delivery-stopping for academic profiles):
 - Pasted paper figures/tables with illegible axis labels (re-plot at slide
-  scale: fonts ≥ 12 pt at final size, 2–3× line widths)
+  scale: fonts ≥ 16 pt at final size, 2–3× line widths)
 - Charts without axis labels/units, or error bars without type (SD/SE/CI)
   and n
 - rainbow/jet colormaps on quantitative data (false boundaries); use
@@ -250,9 +271,13 @@ objects — treat them as geometry systems, not decoration):
 
 1. `uv run scripts/powerpoint_pdf_qa.py deck.pptx --out qa/powerpoint-pdf --pdf-only` —
    PowerPoint PDF artifact exists and was inspected.
-2. `uv run scripts/verify_deck.py deck.pptx` — structural pass required.
-3. **Title read-through**: read only the titles in order — they must tell
-   the complete story on their own (horizontal flow).
+2. `uv run scripts/verify_deck.py deck.pptx --min-font-size 16` — structural
+   and audience-text floor pass required. Add narrow
+   `--allow-small-font-regex` exemptions only for pure citations/page numbers.
+   The checker covers editable textbox, group, and table-cell runs; inspect
+   chart-internal labels and text baked into images in the PowerPoint PDF.
+3. **Title-and-bridge read-through**: read only the titles and transitions in
+   order — they must tell one causal story without unexplained topic jumps.
 4. **Glance test**: each slide's point graspable in ~3 seconds at thumbnail
    size.
 5. **Back-of-room test**: at 50% zoom on screen, is everything readable?
@@ -264,3 +289,7 @@ objects — treat them as geometry systems, not decoration):
    where the skill claims native math; simple charts are native when likely to
    be edited; generated plot images keep their source script beside the deck.
 8. Time sanity: slide count ≈ talk minutes (±30%).
+9. **Presenter-understanding test** (technical/academic): ask the presenter to
+   explain each proof object and claim-carrying number without reading slide
+   prose. Anything they cannot explain is simplified, removed, or marked for
+   discussion before delivery.

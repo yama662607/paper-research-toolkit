@@ -37,10 +37,20 @@ level, and the deck's proof objects (figures, charts, equations, images,
 videos). Ask only for missing information. For targeted edits, do not run a
 brief gate; preserve the supplied deck and make the requested change.
 
-Before writing slide code for a new deck, write a compact quality plan:
-profile, title/claim spine, visual motif, palette roles, slide-family rhythm,
-and which proof object anchors each slide. If this plan would fit any deck
-after replacing the topic words, it is too generic — revise it before coding.
+Before writing slide code for a new deck or broad redesign, read
+[references/content-planning.md](references/content-planning.md) and write its
+compact deck plan: claim, audience question, proof object, evidence source,
+incoming/outgoing bridge, and presenter-understanding status per slide. Then
+add the visual quality plan: profile, visual motif, palette roles, and
+slide-family rhythm. If either plan would fit any deck after replacing the
+topic words, it is too generic — revise it before coding.
+
+When the user will present AI-generated scientific or technical content,
+understanding is a delivery gate. If they cannot yet explain a chart, model,
+or claim-carrying number, pause to explain, simplify, or remove it; do not
+silently mark the slide complete. For live academic decks where a simulation
+or model carries a claim, apply the scientific-model contract in
+content-planning.md; it is mandatory in full for progress meetings.
 
 ## Quick Reference
 
@@ -65,6 +75,7 @@ after replacing the topic words, it is too generic — revise it before coding.
 | Design foundations (any deck) | read [references/design-principles.md](references/design-principles.md) |
 | Genre rules (academic/business/lecture) | read [references/design-profiles.md](references/design-profiles.md) |
 | Review / QA checklists & prohibitions | read [references/qa-checklist.md](references/qa-checklist.md) |
+| Plan claims, transitions, evidence provenance, and presenter understanding | read [references/content-planning.md](references/content-planning.md) |
 | High-fidelity visual QA artifact | `uv run scripts/powerpoint_pdf_qa.py deck.pptx --out qa/powerpoint-pdf --pdf-only` |
 | Approximate render of a few slides (PowerPoint busy/unavailable) | `uv run scripts/render_slides.py deck.pptx --slides 2,7 --out qa/approx` |
 | Final validation | `uv run scripts/verify_deck.py deck.pptx` |
@@ -222,7 +233,7 @@ defects, re-render only affected slides, and **stop after one fix cycle**
 unless a new user-visible defect appeared.
 
 Before delivery, also run the final tests at the end of qa-checklist.md
-(title read-through, glance test, grayscale test, time sanity).
+(title-and-bridge read-through, glance test, grayscale test, time sanity).
 
 Fallback: if PowerPoint for Mac is unavailable, render a PDF with LibreOffice
 or ONLYOFFICE and rasterize with PDFium, but label the result approximate and
@@ -238,13 +249,21 @@ slack.
 ## Final Verification (step 7)
 
 ```bash
-uv run scripts/verify_deck.py deck.pptx
+uv run scripts/verify_deck.py deck.pptx --min-font-size 16
 ```
 
 Checks ZIP/package structure, relationship integrity (every referenced media
 file exists), re-opens via python-pptx, scans for placeholder debris, and
 runs ffprobe on embedded media. It also rejects list-marker-looking text that
 was typed by hand instead of made as native PowerPoint bullets/numbering.
+`--min-font-size 16` rejects non-exempt text runs below the audience-readable
+floor and text whose effective size cannot be proven from an explicit run
+size. Pure citations, page numbers, or other deliberately small source notes
+must be exempted narrowly with `--allow-small-font-regex`; do not exempt
+conditions, units, axis explanations, or anything the audience needs to
+understand the result. Example: `--allow-small-font-regex '^Source:'`. The
+check covers editable textbox, group, and table-cell runs. Text baked into
+images and chart-internal labels still requires PowerPoint PDF inspection.
 Package checks include duplicate ZIP entries, stale `[Content_Types].xml`
 overrides, and empty or unresolved `r:id`/`r:embed`/`r:link` references. This
 is the only check allowed after animations are injected. Fix anything it

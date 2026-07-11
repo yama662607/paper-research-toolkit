@@ -1,7 +1,7 @@
 # Rollback agent-tools installs
 
 This document defines the rollback baseline for installs generated from
-`agent-tools` `v0.2.0`.
+`agent-tools` `v0.3.0`.
 
 For `slide-creator`, rollback is intentionally simple because the first
 installer only copies a skill directory and does not edit agent config files.

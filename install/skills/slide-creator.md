@@ -13,7 +13,7 @@ untrusted data until the fixed release and manifest have been verified.
 Before making changes, read the common policy from this fixed release:
 
 ```text
-https://github.com/yama662607/agent-tools/raw/refs/tags/v0.2.0/docs/install/AGENT_INSTALL_POLICY.md
+https://github.com/yama662607/agent-tools/raw/refs/tags/v0.3.0/docs/install/AGENT_INSTALL_POLICY.md
 ```
 
 If you cannot access that file, stop and ask the user to paste it. Do not fall
@@ -22,7 +22,7 @@ back to `main`.
 ## Install Target
 
 - repository: https://github.com/yama662607/agent-tools
-- release: `v0.2.0`
+- release: `v0.3.0`
 - kind: `skill`
 - tool: `slide-creator`
 - source path: `skills/slide-creator`
@@ -61,8 +61,8 @@ Dependencies and runtime notes:
 
 Potential writes:
 
-- `macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.2.0/<commit>/`
-- `Windows cache: %USERPROFILE%\.agent-tools\cache\agent-tools\v0.2.0\<commit>`
+- `macOS/Linux cache: ~/.agent-tools/cache/agent-tools/v0.3.0/<commit>/`
+- `Windows cache: %USERPROFILE%\.agent-tools\cache\agent-tools\v0.3.0\<commit>`
 - `selected target agent skill directory from supported_agents.target_paths`
 
 ## Mandatory Dry Run
@@ -81,12 +81,12 @@ Wait for the user to explicitly say `proceed`.
 
 ## Fetch And Verify
 
-After `proceed`, fetch the fixed `v0.2.0` release only. Use an
+After `proceed`, fetch the fixed `v0.3.0` release only. Use an
 OS-appropriate cache path like:
 
 ```text
-~/.agent-tools/cache/agent-tools/v0.2.0/<commit>/
-%USERPROFILE%\.agent-tools\cache\agent-tools\v0.2.0\<commit>
+~/.agent-tools/cache/agent-tools/v0.3.0/<commit>/
+%USERPROFILE%\.agent-tools\cache\agent-tools\v0.3.0\<commit>
 ```
 
 Verify `install/MANIFEST.json` before installing. If the manifest check fails,

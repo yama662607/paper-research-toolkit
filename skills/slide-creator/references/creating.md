@@ -5,10 +5,12 @@ keep it next to the output — regeneration must always be one command.
 
 ## Before coding
 
-Do not open with `addText` calls. First write the quality plan from
-design-profiles.md as comments near the top of the build script: profile,
-claim spine, proof objects, visual motif, palette roles, and slide-family
-rhythm. Then define layout constants and helpers that implement that plan.
+Do not open with `addText` calls. First complete the compact content plan from
+content-planning.md: claims, audience questions, proof objects, sources,
+incoming/outgoing bridges, and presenter-understanding status. Then write the
+visual quality plan from design-profiles.md as comments near the top of the
+build script: profile, visual motif, palette roles, and slide-family rhythm.
+Only then define layout constants and helpers that implement those plans.
 
 Every content slide should have a dominant proof object. If a slide has only
 prose, either move the prose to speaker notes, turn it into a diagram/table,
@@ -93,8 +95,11 @@ one coordinate system and keep it consistent. `LAYOUT_WIDE` is **13.333 x
   for visuals PowerPoint cannot faithfully express (custom scientific plots,
   phase diagrams, network/chord/Sankey-style figures), and keep the source
   script beside the deck.
-- **Speaker notes**: `slide.addNotes("...")`. Put presenter cues, reveal
-  instructions, and explanatory narration here, not as visible slide text.
+- **Speaker notes**: `slide.addNotes("...")`. For live academic decks use
+  short scan-friendly lines grouped as message, evidence, transition, and
+  likely question. Put presenter cues, reveal instructions, and explanatory
+  narration here, not as visible slide text. Draft notes early enough to
+  expose understanding gaps; do not wait until visual polish is complete.
 - **Slide numbers**: `pres.defineSlideMaster` with `slideNumber` or
   `slide.slideNumber = {x, y}`.
 
@@ -111,7 +116,7 @@ function claimFigureSlide(pres, { claim, figPath, caption }) {
   const s = pres.addSlide();
   s.addText(claim, { x: M, y: 0.3, w: W, h: 0.7, fontSize: 26, bold: true });
   s.addImage({ path: figPath, x: 1.2, y: 1.15, w: 7.6, h: 3.6, sizing: { type: "contain", w: 7.6, h: 3.6 } });
-  s.addText(caption, { x: 1.2, y: 4.85, w: 7.6, h: 0.4, fontSize: 12, color: "666666", italic: true });
+  s.addText(caption, { x: 1.2, y: 4.85, w: 7.6, h: 0.4, fontSize: 16, color: "666666", italic: true });
   return s;
 }
 ```

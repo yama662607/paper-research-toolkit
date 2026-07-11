@@ -10,11 +10,13 @@ video/animation bugs).
 Checks: ZIP integrity, package/content-type consistency, python-pptx re-open,
 relationship targets and references, media health via ffprobe, duplicate shape
 ids, animation target ids, placeholder debris in text, fake list markers.
+With --min-font-size, also enforces an explicit audience-readable text floor;
 --text dumps per-slide text instead.
 """
 import argparse
 from collections import Counter
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -87,12 +89,106 @@ def _content_type_extension(part_name: str) -> str:
     return Path(part_name).suffix.lower().lstrip(".")
 
 
+def _compile_patterns(raw_patterns: list[str], parser: argparse.ArgumentParser,
+                      option: str) -> list[re.Pattern[str]]:
+    compiled = []
+    for raw in raw_patterns:
+        try:
+            compiled.append(re.compile(raw, re.IGNORECASE))
+        except re.error as exc:
+            parser.error(f"{option} contains invalid regex {raw!r}: {exc}")
+    return compiled
+
+
+def _matches_any(patterns: list[re.Pattern[str]], value: str) -> bool:
+    return any(pattern.search(value) for pattern in patterns)
+
+
+def _iter_text_frames(shapes, prefix: str = ""):
+    """Yield (PowerPoint name, diagnostic label, text frame)."""
+    for shape in shapes:
+        shape_name = shape.name or "<unnamed>"
+        label = f"{prefix}{shape_name}"
+        if shape.has_text_frame:
+            yield shape_name, label, shape.text_frame
+        if shape.has_table:
+            for row_idx, row in enumerate(shape.table.rows, 1):
+                for col_idx, cell in enumerate(row.cells, 1):
+                    yield (
+                        shape_name,
+                        f"{label} cell {row_idx},{col_idx}",
+                        cell.text_frame,
+                    )
+        child_shapes = getattr(shape, "shapes", None)
+        if child_shapes is not None:
+            yield from _iter_text_frames(child_shapes, prefix=f"{label} / ")
+
+
+def _paragraph_segments(para) -> list[tuple[str, float | None]]:
+    """Return visible a:r/a:fld text and explicit size in points.
+
+    python-pptx Paragraph.runs omits PowerPoint fields such as slide numbers
+    and dates, so inspect the paragraph XML directly.
+    """
+    from pptx.oxml.ns import qn
+
+    segments = []
+    for node in para._p.xpath("./a:r | ./a:fld"):
+        text = "".join(t.text or "" for t in node.xpath(".//a:t"))
+        if not text.strip():
+            continue
+        rpr = node.find(qn("a:rPr"))
+        raw_size = rpr.get("sz") if rpr is not None else None
+        try:
+            size_pt = float(raw_size) / 100 if raw_size is not None else None
+        except (TypeError, ValueError):
+            size_pt = None
+        if size_pt is not None and (not math.isfinite(size_pt) or size_pt <= 0):
+            size_pt = None
+        segments.append((text, size_pt))
+    return segments
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("pptx")
     p.add_argument("--text", action="store_true",
                    help="dump per-slide text and exit")
+    p.add_argument(
+        "--min-font-size",
+        type=float,
+        metavar="PT",
+        help=("fail non-exempt text runs below PT; text with no explicit run "
+              "size also fails because the floor cannot be proven"),
+    )
+    p.add_argument(
+        "--allow-small-font-regex",
+        action="append",
+        default=[],
+        metavar="REGEX",
+        help=("exempt a paragraph whose text matches REGEX; repeat for narrow "
+              "citation/page-number exceptions"),
+    )
+    p.add_argument(
+        "--allow-small-font-shape-regex",
+        action="append",
+        default=[],
+        metavar="REGEX",
+        help=("exempt text in a shape whose PowerPoint name matches REGEX; "
+              "repeat as needed"),
+    )
     args = p.parse_args()
+    if (args.min_font_size is not None
+            and (not math.isfinite(args.min_font_size)
+                 or args.min_font_size <= 0)):
+        p.error("--min-font-size must be a finite number greater than zero")
+    text_exemptions = _compile_patterns(
+        args.allow_small_font_regex, p, "--allow-small-font-regex"
+    )
+    shape_exemptions = _compile_patterns(
+        args.allow_small_font_shape_regex, p,
+        "--allow-small-font-shape-regex"
+    )
     path = Path(args.pptx)
     problems: list[str] = []
 
@@ -365,6 +461,46 @@ def main() -> None:
              f"numbering instead: {fake_list_markers}", problems)
     else:
         ok("no manual list markers masquerading as bullets/numbering")
+
+    # --- audience-readable font floor --------------------------------------
+    if args.min_font_size is not None:
+        undersized = []
+        unknown_size = []
+        for i, slide in enumerate(prs.slides, 1):
+            for shape_name, text_label, text_frame in _iter_text_frames(slide.shapes):
+                if _matches_any(shape_exemptions, shape_name):
+                    continue
+                for para in text_frame.paragraphs:
+                    para_text = para.text.strip()
+                    if not para_text or _matches_any(text_exemptions, para_text):
+                        continue
+                    segments = _paragraph_segments(para)
+                    if not segments:
+                        unknown_size.append(
+                            f"slide {i}, shape {text_label!r}: {para_text[:60]!r}"
+                        )
+                        continue
+                    for segment_text, size_pt in segments:
+                        snippet = segment_text.strip()[:60]
+                        where = f"slide {i}, shape {text_label!r}: {snippet!r}"
+                        if size_pt is None:
+                            unknown_size.append(where)
+                        elif size_pt + 1e-6 < args.min_font_size:
+                            undersized.append(f"{where} ({size_pt:g} pt)")
+        if undersized:
+            fail(
+                f"text below {args.min_font_size:g} pt audience floor: "
+                f"{undersized}", problems
+            )
+        else:
+            ok(f"no non-exempt text below {args.min_font_size:g} pt")
+        if unknown_size:
+            fail(
+                "text has no explicit run font size, so the audience floor "
+                f"cannot be proven: {unknown_size}", problems
+            )
+        else:
+            ok("all non-exempt text has an explicit run font size")
 
     # --- media health -------------------------------------------------------
     media = [n for n in names if n.startswith("ppt/media/")

@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_RELEASE = "v0.2.0"
+EXPECTED_RELEASE = "v0.3.0"
 REQUIRED_TARGET_OS = {"macos", "linux", "windows"}
 
 SECRET_PATTERNS = [

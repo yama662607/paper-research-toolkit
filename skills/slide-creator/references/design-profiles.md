@@ -29,8 +29,9 @@ Two questions determine almost everything:
 
 ## Quality plan before code
 
-Before creating slides from scratch, write this five-line plan in the build
-notes or script comments:
+Before creating slides from scratch, first write the content plan in
+[content-planning.md](content-planning.md). Then write this five-line visual
+plan in the build notes or script comments:
 
 1. **Claim spine** — one title/claim per slide; read alone, the titles tell
    the story.
@@ -118,8 +119,9 @@ breaks at phrase boundaries, or reduce the font size by 1-2 pt before
 accepting an ugly wrap. Long claim titles may become a short title plus a
 smaller support line; do not let the title consume the slide.
 
-**Kickers**: small muted label above the claim title naming the slide's role
-(`結果 2/3`, `議論`, `NEXT`), 11–12 pt.
+**Kickers**: muted label above the claim title naming the slide's role
+(`結果 2/3`, `議論`, `NEXT`), 16 pt minimum. If it is not worth making
+audience-readable, remove it instead of shrinking it into decoration.
 
 **Still banned** (see qa-checklist.md for the full prohibition list):
 decorative bars/stripes, boxes around prose, icon confetti, identical card
@@ -136,10 +138,10 @@ are a smell on results pages: give every content slide a visual anchor
 |---|---|---|
 | 見出し | **Hiragino Kaku Gothic ProN + bold**(和文はウェイト明示が命 — デフォルトの細さが「見えにくい」の主犯) | 24–28 pt |
 | 本文 | 同 ProN(W3)、18 pt 未満禁止 | 18–20 pt |
-| 条件・脚注 | 同 ProN(W3)、投影で読む条件文は13–14 pt、純粋な出典だけ11–12 pt可 | 11–14 pt |
+| 条件・脚注 | 同 ProN(W3)、聴衆が理解に必要な条件文は16 pt以上、純粋な出典・ページ番号だけ11–12 pt可 | 11–16 pt |
 | Latin & digits | Arial / Helvetica Neue(数字を和文フォントで組まない) | matches |
 | Math | Cambria Math(OMML エンジンの固定要件) | display 24–28 pt |
-| Code | Menlo / Consolas | 14–16 pt |
+| Code | Menlo / Consolas | 16 pt minimum |
 
 Japanese conventions: スライド本文はゴシック(明朝は投影で線が痩せる)。
 日本語+英語併記タイトルは学会デッキでは一般的 — 聞き手に合わせ判断。
@@ -182,6 +184,16 @@ suppresses the feedback you came for. 5–10 slides.
    the slide is meant to drive lab action, include the visible decision gate:
    timing, priority, owner, or the criterion for choosing between paths.
 6. **Appendix**: everything else. Moving a slide here is success, not loss.
+
+**Content accountability**: apply the presenter-understanding, figure,
+number-provenance, and full scientific-model contracts in
+[content-planning.md](content-planning.md). These are mandatory for progress
+meetings. A stochastic conversion such as `P = 1 - exp(-k dt)` does not by
+itself describe the physical model.
+
+**Speaker notes**: use short scan-friendly lines for message, evidence,
+transition, and likely question. Prepare them while refining content, not
+after the deck is visually complete; late notes hide understanding gaps.
 
 ### journal-club(論文紹介)
 
@@ -226,7 +238,7 @@ than minutes — leave room for the story to breathe and for questions.
 
 ### Figures (all academic profiles)
 
-- Re-plot for slides: axis/label fonts ≥ 12 pt at final size, line widths
+- Re-plot for slides: axis/label fonts ≥ 16 pt at final size, line widths
   and markers 2–3× paper versions, `dpi=200, bbox_inches="tight"`.
 - Keep visuals editable when PowerPoint can represent them faithfully: simple
   bar/line/scatter/pie/combo charts should stay native if the user may revise
